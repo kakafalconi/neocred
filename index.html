@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neocred - Atendimento</title>
+    
+    <script type="text/javascript">
+        (function(d, t) {
+            var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+            g.src = "https://cdn.pushalert.co/integrate_b4355b78361cfaf6b9e7c6eecea82477.js";
+            s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+    </script>
+    
+    <style>
+        /* Garante que o Typebot ocupe a tela toda sem bordas brancas */
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <script type="module">
+        import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@0.3/dist/web.js'
+
+        Typebot.initStandard({
+            // O slug é a parte final do seu link público
+            typebot: "ct-ep-br-chat01", 
+            
+            // O apiHost é o domínio onde seu Typebot roda
+            apiHost: "https://neochat.incred.digital", 
+        });
+    </script>
+    
+    <div id="typebot-standard" style="width: 100%; height: 100vh;"></div>
+
+</body>
+</html>
