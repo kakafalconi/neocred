@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neocred - Atendimento</title>
     
+    <style>
+        /* Remove margens e barra de rolagem da página "mãe" */
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        
+        /* Garante que o bot ocupe a largura total */
+        typebot-standard { width: 100%; height: 100vh; display: block; }
+    </style>
+
     <script type="text/javascript">
         (function(d, t) {
             var g = d.createElement(t),
@@ -13,38 +21,29 @@
             s.parentNode.insertBefore(g, s);
         }(document, "script"));
     </script>
-    
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-    </style>
 </head>
 <body>
 
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                // Força o navegador a buscar o sw.js dentro da pasta correta
                 navigator.serviceWorker.register('/neocred/sw.js', { scope: '/neocred/' })
-                .then(function(registration) {
-                    console.log('Service Worker registrado com sucesso na pasta /neocred/:', registration.scope);
-                }, function(err) {
-                    console.log('Falha ao registrar Service Worker:', err);
-                });
+                .then(r => console.log('SW registrado com sucesso.'))
+                .catch(e => console.log('Aviso SW:', e));
             });
         }
     </script>
 
     <script type="module">
-        // Trocamos jsdelivr por unpkg que é mais estável para essa lib
-        import Typebot from 'https://unpkg.com/@typebot.io/js@3/dist/web.js'
+      import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js';
 
-        Typebot.initStandard({
-            typebot: "ct-ep-br-chat01", 
-            apiHost: "https://neochat.incred.digital", 
-        });
+      Typebot.initStandard({
+        typebot: "ct-ep-br-chat01",
+        apiHost: "https://neochat.incred.digital",
+      });
     </script>
-    
-    <div id="typebot-standard" style="width: 100%; height: 100vh;"></div>
+
+    <typebot-standard style="height: 100vh;"></typebot-standard>
 
 </body>
 </html>
