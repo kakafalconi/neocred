@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neocred - Atendimento</title>
+    <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="/manifest.json">
     
     <style>
-        /* Remove margens e garante tela cheia */
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        /* Garante que o elemento do bot ocupe tudo */
         typebot-standard { width: 100%; height: 100vh; display: block; }
     </style>
+</head>
+<body>
 
     <script type="text/javascript">
         (function(d, t) {
@@ -20,16 +22,14 @@
             s.parentNode.insertBefore(g, s);
         }(document, "script"));
     </script>
-</head>
-<body>
 
     <script>
+        // Isso é crucial para o GitHub Pages (que roda em subpasta)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                // Registra o sw.js forçando o caminho correto
                 navigator.serviceWorker.register('/neocred/sw.js', { scope: '/neocred/' })
-                .then(r => console.log('Service Worker OK'))
-                .catch(e => console.log('Info SW:', e));
+                .then(r => console.log('✅ Service Worker do Push registrado!'))
+                .catch(e => console.log('⚠️ Erro no SW:', e));
             });
         }
     </script>
