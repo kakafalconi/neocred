@@ -15,20 +15,31 @@
     </script>
     
     <style>
-        /* Garante que o Typebot ocupe a tela toda sem bordas brancas */
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
     </style>
 </head>
 <body>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Força o navegador a buscar o sw.js dentro da pasta correta
+                navigator.serviceWorker.register('/neocred/sw.js', { scope: '/neocred/' })
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso na pasta /neocred/:', registration.scope);
+                }, function(err) {
+                    console.log('Falha ao registrar Service Worker:', err);
+                });
+            });
+        }
+    </script>
+
     <script type="module">
-        import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@3/dist/web.js'
+        // Trocamos jsdelivr por unpkg que é mais estável para essa lib
+        import Typebot from 'https://unpkg.com/@typebot.io/js@3/dist/web.js'
 
         Typebot.initStandard({
-            // O slug é a parte final do seu link público
             typebot: "ct-ep-br-chat01", 
-            
-            // O apiHost é o domínio onde seu Typebot roda
             apiHost: "https://neochat.incred.digital", 
         });
     </script>
