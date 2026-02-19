@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisando Proposta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: white;
+            border-radius: 16px;
+            padding: 40px 28px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        /* Loading Phase */
+        .loading-phase {
+            display: block;
+        }
+
+        .loading-phase.hide {
+            display: none;
+        }
+
+        .loading-icon-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 28px;
+        }
+
+        .loading-icon-bg {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #00A651 0%, #00d166 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1) translateZ(0); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(1.05) translateZ(0); 
+                opacity: 0.9; 
+            }
+        }
+
+        .loading-icon-bg::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #00A651;
+            opacity: 0.3;
+            animation: ripple 3s ease-out infinite;
+            will-change: transform, opacity;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1) translateZ(0);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(1.4) translateZ(0);
+                opacity: 0;
+            }
+        }
+
+        .loading-icon {
+            font-size: 36px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .loading-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .loading-subtitle {
+            font-size: 15px;
+            color: #6c757d;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        /* Status Steps */
+        .status-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .status-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            opacity: 0.4;
+            transition: all 0.4s ease;
+        }
+
+        .status-step.active {
+            opacity: 1;
+            background: #f0fdf4;
+            border-left-color: #00A651;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .status-step.completed {
+            opacity: 0.7;
+            background: white;
+            border-left-color: #dee2e6;
+        }
+
+        .status-step-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .status-step.active .status-step-icon {
+            background: #00A651;
+            color: white;
+            animation: spinMobile 1.2s linear infinite;
+        }
+
+        @keyframes spinMobile {
+            to { transform: rotate(360deg) translateZ(0); }
+        }
+
+        .status-step.completed .status-step-icon {
+            background: #00A651;
+            color: white;
+        }
+
+        .status-step.active .status-step-icon::before {
+            content: '↻';
+        }
+
+        .status-step.completed .status-step-icon::before {
+            content: '✓';
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg) translateZ(0); }
+        }
+
+        .status-step-text {
+            font-size: 14px;
+            color: #495057;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            margin-top: 8px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00A651 0%, #00d166 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.3),
+                transparent
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateZ(0); }
+            100% { transform: translateX(100%) translateZ(0); }
+        }
+
+        /* Waiting Phase (substitui success) */
+        .waiting-phase {
+            display: none;
+        }
+
+        .waiting-phase.show {
+            display: block;
+            animation: fadeInScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .notification-icon {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+            animation: bellPulse 2s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        @keyframes bellPulse {
+            0%, 100% { transform: scale(1) translateZ(0); }
+            50% { transform: scale(1.03) translateZ(0); }
+        }
+
+        .notification-icon::before {
+            content: ':bell:';
+            animation: bellRing 3s ease-in-out infinite;
+            display: inline-block;
+            will-change: transform;
+        }
+
+        @keyframes bellRing {
+            0%, 100% { transform: rotate(0deg) translateZ(0); }
+            6%, 18% { transform: rotate(-12deg) translateZ(0); }
+            12%, 24% { transform: rotate(12deg) translateZ(0); }
+        }
+
+        .waiting-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .waiting-badge::before {
+            content: ':hourglass_flowing_sand:';
+            font-size: 14px;
+        }
+
+        .waiting-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .waiting-subtitle {
+            font-size: 15px;
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .waiting-highlight {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        /* Notification Alert */
+        .notification-alert {
+            padding: 16px;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification-alert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.4),
+                transparent
+            );
+            animation: alertShine 3s infinite;
+        }
+
+        @keyframes alertShine {
+            0%, 100% { left: -100%; }
+            50% { left: 100%; }
+        }
+
+        .notification-alert-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 13px;
+            color: #92400e;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .notification-text strong {
+            font-weight: 700;
+        }
+
+        /* Button CTA */
+        .cta-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00A651 0%, #00d166 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: none;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 16px rgba(0, 166, 81, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 24px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .cta-button:active {
+            transform: scale(0.97) translateZ(0);
+        }
+
+        .cta-button.show {
+            display: block;
+            animation: slideUpButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUpButton {
+            from {
+                opacity: 0;
+                transform: translateY(20px) translateZ(0);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) translateZ(0);
+            }
+        }
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #dee2e6;
+            border-radius: 50%;
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.3s; }
+        .dot:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes dotPulse {
+            0%, 100% { 
+                background: #dee2e6;
+                transform: scale(1) translateZ(0);
+            }
+            50% { 
+                background: #f59e0b;
+                transform: scale(1.15) translateZ(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 32px 24px;
+                border-radius: 12px;
+            }
+
+            .loading-title,
+            .waiting-title {
+                font-size: 20px;
+            }
+
+            .loading-icon-container {
+                width: 70px;
+                height: 70px;
+            }
+
+            .loading-icon {
+                font-size: 32px;
+            }
+
+            .notification-icon {
+                width: 76px;
+                height: 76px;
+                font-size: 38px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Fase 1: Loading com Steps (4 segundos) -->
+        <div class="loading-phase" id="loadingPhase">
+            <div class="loading-icon-container">
+                <div class="loading-icon-bg">
+                    <div class="loading-icon">:mag:</div>
+                </div>
+            </div>
+            
+            <h2 class="loading-title">Analisando suas respostas</h2>
+            <p class="loading-subtitle">Comparando com nossa base de dados</p>
+
+            <div class="status-steps">
+                <div class="status-step" id="step1">
+                    <div class="status-step-icon"></div>
+                    <div class="status-step-text">Verificando as suas respostas</div>
+                </div>
+                <div class="status-step" id="step2">
+                    <div class="status-step-icon"></div>
+                    <div class="status-step-text">Procurando as opções compatíveis</div>
+                </div>
+                <div class="status-step" id="step3">
+                    <div class="status-step-icon"></div>
+                    <div class="status-step-text">Selecionando as melhores opções</div>
+                </div>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-label">Progresso da análise</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fase 2: Aguardando Notificação -->
+        <div class="waiting-phase" id="waitingPhase">
+            <div class="notification-icon"></div>
+            
+            <div class="waiting-badge">Aguardando Permissão</div>
+            
+            <h2 class="waiting-title">Aceite as notificações para continuar</h2>
+            <p class="waiting-subtitle">
+                Para visualizar as <span class="waiting-highlight">ofertas encontradas</span>, você precisa permitir notificações
+            </p>
+
+            <!-- Alert de notificação -->
+            <div class="notification-alert">
+                <div class="notification-alert-content">
+                    <span class="alert-icon">:point_up_2:</span>
+                    <span class="notification-text">
+                        <strong>Clique em "Permitir"</strong> na janela que apareceu no topo do seu navegador
+                    </span>
+                </div>
+            </div>
+
+            <!-- Progress dots indicando aguardando -->
+            <div class="progress-dots" id="progressDotsWaiting">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+            <!-- Botão CTA (aparece após aceitar ou timeout) -->
+            <button class="cta-button" id="ctaButton">
+                Ver Minhas Opções
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let animationStarted = false;
+
+        // Fase 1: Loading com steps (4 segundos)
+        function startLoading() {
+            if (animationStarted) return;
+            animationStarted = true;
+
+            const progressFill = document.getElementById('progressFill');
+            
+            // Usa requestAnimationFrame para melhor performance
+            // Step 1 (0-1.3s)
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.getElementById('step1').classList.add('active');
+                    progressFill.style.width = '33%';
+                }, 300);
+
+                setTimeout(() => {
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('step1').classList.add('completed');
+                }, 1300);
+
+                // Step 2 (1.3-2.6s)
+                setTimeout(() => {
+                    document.getElementById('step2').classList.add('active');
+                    progressFill.style.width = '66%';
+                }, 1300);
+
+                setTimeout(() => {
+                    document.getElementById('step2').classList.remove('active');
+                    document.getElementById('step2').classList.add('completed');
+                }, 2600);
+
+                // Step 3 (2.6-4s)
+                setTimeout(() => {
+                    document.getElementById('step3').classList.add('active');
+                    progressFill.style.width = '100%';
+                }, 2600);
+
+                setTimeout(() => {
+                    document.getElementById('step3').classList.remove('active');
+                    document.getElementById('step3').classList.add('completed');
+                }, 4000);
+
+                // Mostra tela de aguardando após 4s
+                setTimeout(() => {
+                    showWaitingScreen();
+                }, 4000);
+            });
+        }
+
+        // Fase 2: Tela de aguardando + Push
+        function showWaitingScreen() {
+            // Esconde loading com delay para transição suave
+            setTimeout(() => {
+                document.getElementById('loadingPhase').classList.add('hide');
+            }, 100);
+            
+            // Mostra tela de aguardando
+            setTimeout(() => {
+                const waitingPhase = document.getElementById('waitingPhase');
+                waitingPhase.classList.add('show');
+            }, 200);
+
+            // Solicita push após tela aparecer (1 segundo de delay)
+            setTimeout(() => {
+                requestNotificationPermission();
+            }, 1500);
+
+            // Mostra botão CTA após 5 segundos
+            setTimeout(() => {
+                showCTA();
+            }, 5000);
+        }
+
+        // Mostra o botão CTA e esconde os dots
+        function showCTA() {
+            const dots = document.getElementById('progressDotsWaiting');
+            const button = document.getElementById('ctaButton');
+            
+            if (dots) dots.style.display = 'none';
+            if (button) button.classList.add('show');
+        }
+
+        // Pega UTMs da URL atual e adiciona ao link de destino
+        function getUrlWithUTMs(baseUrl) {
+            const currentUrl = new URL(window.location.href);
+            const params = new URLSearchParams(currentUrl.search);
+            
+            // Cria URL de destino
+            const destinationUrl = new URL(baseUrl);
+            
+            // Transfere todos os parâmetros UTM
+            const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'utm_id'];
+            utmParams.forEach(param => {
+                const value = params.get(param);
+                if (value) {
+                    destinationUrl.searchParams.set(param, value);
+                }
+            });
+            
+            // Transfere TODOS os outros parâmetros também
+            params.forEach((value, key) => {
+                if (!destinationUrl.searchParams.has(key)) {
+                    destinationUrl.searchParams.set(key, value);
+                }
+            });
+            
+            return destinationUrl.toString();
+        }
+
+        // Solicita permissão de notificação
+        async function requestNotificationPermission() {
+            // Verifica suporte básico
+            if (!('Notification' in window)) {
+                console.log('Navegador não suporta notificações');
+                return;
+            }
+
+            // Se já definiu, não pede novamente
+            if (Notification.permission === 'granted' || Notification.permission === 'denied') {
+                console.log('Permissão já definida:', Notification.permission);
+                return;
+            }
+
+            try {
+                // Para Android/Chrome: garante que SW está registrado
+                if ('serviceWorker' in navigator && 'PushManager' in window) {
+                    console.log('Detectado Android/Chrome - registrando SW...');
+                    
+                    // Verifica se já tem SW ativo
+                    let registration = await navigator.serviceWorker.getRegistration();
+                    
+                    if (!registration) {
+                        console.log('Nenhum SW encontrado, registrando /sw.js...');
+                        registration = await navigator.serviceWorker.register('/sw.js');
+                        console.log('SW registrado:', registration);
+                    } else {
+                        console.log('SW já registrado:', registration);
+                    }
+                    
+                    // Aguarda SW estar pronto
+                    await navigator.serviceWorker.ready;
+                    console.log('SW está pronto!');
+                }
+
+                // Solicita permissão
+                console.log('Solicitando permissão de notificação...');
+                const permission = await Notification.requestPermission();
+                console.log('Resposta de notificação:', permission);
+                
+            } catch (err) {
+                console.error('Erro ao solicitar notificação:', err);
+            }
+        }
+
+        // Redireciona ao clicar no botão (mantendo UTMs)
+        document.getElementById('ctaButton').addEventListener('click', () => {
+            const finalUrl = getUrlWithUTMs('https://survey.credtips.net/ep-rd');
+            console.log('Redirecionando para:', finalUrl);
+            window.location.href = finalUrl;
+        });
+
+        // Auto-inicia quando visível
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animationStarted) {
+                        startLoading();
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            const waitForContainer = setInterval(() => {
+                const container = document.querySelector('.container');
+                if (container) {
+                    observer.observe(container);
+                    clearInterval(waitForContainer);
+                }
+            }, 100);
+
+            setTimeout(() => clearInterval(waitForContainer), 5000);
+        } else {
+            setTimeout(() => {
+                const container = document.querySelector('.container');
+                if (container) startLoading();
+            }, 500);
+        }
+    </script>
+</body>
+</html>
